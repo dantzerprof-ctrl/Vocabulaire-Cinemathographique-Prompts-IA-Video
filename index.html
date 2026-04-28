@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vocabulaire Cinématographique — Prompts IA Vidéo</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0c10;
+    --surface: #13151a;
+    --surface2: #1c1f28;
+    --border: #2a2d3a;
+    --text: #e8eaf0;
+    --text-muted: #6b7280;
+    --text-dim: #9ca3af;
+
+    --kling: #f97316;
+    --kling-bg: rgba(249,115,22,0.1);
+    --kling-border: rgba(249,115,22,0.35);
+
+    --canvas: #3b82f6;
+    --canvas-bg: rgba(59,130,246,0.1);
+    --canvas-border: rgba(59,130,246,0.35);
+
+    --veo: #10b981;
+    --veo-bg: rgba(16,185,129,0.1);
+    --veo-border: rgba(16,185,129,0.35);
+
+    --runway: #a855f7;
+    --runway-bg: rgba(168,85,247,0.1);
+    --runway-border: rgba(168,85,247,0.35);
+
+    --all: #e8eaf0;
+    --all-bg: rgba(232,234,240,0.06);
+    --all-border: rgba(232,234,240,0.2);
+
+    --copy-flash: #fbbf24;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  header {
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #0e1018 0%, var(--bg) 100%);
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--kling), var(--canvas), var(--veo), var(--runway));
+  }
+
+  header h1 {
+    font-size: clamp(1.6rem, 4vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+  }
+
+  header h1 span {
+    background: linear-gradient(135deg, #f97316, #f59e0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  header p {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+    margin: 1.5rem auto 0;
+    max-width: 700px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    padding: 0.3rem 0.7rem;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .legend-item:hover { border-color: var(--text-muted); }
+  .legend-item.active { color: var(--text); }
+  .legend-item[data-filter="all"].active { border-color: var(--all-border); background: var(--all-bg); }
+  .legend-item[data-filter="kling"].active { border-color: var(--kling-border); background: var(--kling-bg); color: var(--kling); }
+  .legend-item[data-filter="canvas"].active { border-color: var(--canvas-border); background: var(--canvas-bg); color: var(--canvas); }
+  .legend-item[data-filter="veo"].active { border-color: var(--veo-border); background: var(--veo-bg); color: var(--veo); }
+  .legend-item[data-filter="runway"].active { border-color: var(--runway-border); background: var(--runway-bg); color: var(--runway); }
+
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* SEARCH */
+  .search-wrap {
+    max-width: 600px;
+    margin: 1.5rem auto 0;
+    padding: 0 1rem;
+  }
+
+  .search-wrap input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-wrap input:focus { border-color: var(--canvas); }
+  .search-wrap input::placeholder { color: var(--text-muted); }
+
+  /* MAIN */
+  main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 2.5rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-icon {
+    font-size: 1.2rem;
+    opacity: 0.9;
+  }
+
+  .section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .section-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-left: auto;
+  }
+
+  /* GRID */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 0.6rem;
+  }
+
+  /* TERM CARD */
+  .term {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    overflow: hidden;
+  }
+
+  .term::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 8px 0 0 8px;
+    transition: width 0.2s;
+  }
+
+  .term:hover {
+    background: var(--surface2);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+
+  .term:hover::before { width: 4px; }
+
+  /* Platform tints */
+  .term.kling { border-color: var(--kling-border); }
+  .term.kling::before { background: var(--kling); }
+  .term.kling:hover { border-color: var(--kling); }
+
+  .term.canvas { border-color: var(--canvas-border); }
+  .term.canvas::before { background: var(--canvas); }
+  .term.canvas:hover { border-color: var(--canvas); }
+
+  .term.veo { border-color: var(--veo-border); }
+  .term.veo::before { background: var(--veo); }
+  .term.veo:hover { border-color: var(--veo); }
+
+  .term.runway { border-color: var(--runway-border); }
+  .term.runway::before { background: var(--runway); }
+  .term.runway:hover { border-color: var(--runway); }
+
+  .term.all { border-color: var(--border); }
+  .term.all::before { background: linear-gradient(180deg, var(--kling), var(--canvas), var(--veo), var(--runway)); }
+
+  /* Term content */
+  .term-en {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .term-fr {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0.15rem;
+  }
+
+  .term-desc {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    margin-top: 0.35rem;
+    line-height: 1.45;
+    font-family: 'DM Mono', monospace;
+    font-style: italic;
+  }
+
+  /* Platform badges */
+  .badges {
+    display: flex;
+    gap: 3px;
+    flex-shrink: 0;
+  }
+
+  .badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.56rem;
+    font-weight: 500;
+    padding: 1px 5px;
+    border-radius: 3px;
+    letter-spacing: 0.05em;
+  }
+
+  .badge.kling { background: var(--kling-bg); color: var(--kling); border: 1px solid var(--kling-border); }
+  .badge.canvas { background: var(--canvas-bg); color: var(--canvas); border: 1px solid var(--canvas-border); }
+  .badge.veo { background: var(--veo-bg); color: var(--veo); border: 1px solid var(--veo-border); }
+  .badge.runway { background: var(--runway-bg); color: var(--runway); border: 1px solid var(--runway-border); }
+
+  /* Copy indicator */
+  .copy-icon {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .term:hover .copy-icon { opacity: 0.6; }
+
+  .term.copied {
+    border-color: var(--copy-flash) !important;
+  }
+
+  .term.copied::after {
+    content: '✓ copié';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(251,191,36,0.12);
+    color: var(--copy-flash);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border-radius: 8px;
+    letter-spacing: 0.1em;
+    pointer-events: none;
+  }
+
+  /* Hidden */
+  .term.hidden, .section.hidden { display: none; }
+
+  /* Toast */
+  #toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--copy-flash);
+    color: #000;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.6rem 1.2rem;
+    border-radius: 40px;
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    z-index: 999;
+    pointer-events: none;
+  }
+
+  #toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media (max-width: 600px) {
+    .grid { grid-template-columns: 1fr; }
+    header { padding: 2rem 1rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Vocabulaire <span>Cinématographique</span><br>pour Prompts IA Vidéo</h1>
+  <p>CLICK TO COPY • CLIQUEZ POUR COPIER</p>
+
+  <div class="legend">
+    <div class="legend-item active" data-filter="all">
+      <div class="dot" style="background: linear-gradient(135deg,#f97316,#3b82f6,#10b981,#a855f7)"></div>
+      Toutes plateformes
+    </div>
+    <div class="legend-item" data-filter="kling">
+      <div class="dot" style="background: var(--kling)"></div>
+      Kling AI
+    </div>
+    <div class="legend-item" data-filter="canvas">
+      <div class="dot" style="background: var(--canvas)"></div>
+      Canvas (Pika)
+    </div>
+    <div class="legend-item" data-filter="veo">
+      <div class="dot" style="background: var(--veo)"></div>
+      Veo 3
+    </div>
+    <div class="legend-item" data-filter="runway">
+      <div class="dot" style="background: var(--runway)"></div>
+      Runway / Banana
+    </div>
+  </div>
+
+  <div class="search-wrap">
+    <input type="text" id="search" placeholder="Rechercher un terme… (ex: dolly, bokeh, tilt)" autocomplete="off">
+  </div>
+</header>
+
+<main id="main">
+  <!-- Sections are injected by JS -->
+</main>
+
+<div id="toast">✓ Copié !</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+// platforms: 'all' | 'kling' | 'canvas' | 'veo' | 'runway'
+// copy: what gets copied (English term optimized for prompts)
+
+const SECTIONS = [
+  {
+    icon: '🎥',
+    title: 'Mouvements de Caméra',
+    titleEn: 'Camera Movements',
+    terms: [
+      { en: 'dolly in', fr: 'travelling avant', desc: 'La caméra avance physiquement vers le sujet', platforms: ['all'] },
+      { en: 'dolly out', fr: 'travelling arrière', desc: 'La caméra recule physiquement', platforms: ['all'] },
+      { en: 'dolly zoom (Vertigo effect)', fr: 'effet Vertigo / zoom Hitchcock', desc: 'Zoom inverse simultané au travelling — effet de distorsion perspectiviste', platforms: ['kling','veo'] },
+      { en: 'pan left / pan right', fr: 'panoramique gauche / droite', desc: 'Rotation horizontale de la caméra sur son axe', platforms: ['all'] },
+      { en: 'tilt up / tilt down', fr: 'inclinaison vers le haut / bas', desc: 'Rotation verticale de la caméra sur son axe', platforms: ['all'] },
+      { en: 'truck left / truck right', fr: 'déplacement latéral gauche / droite', desc: 'Déplacement horizontal de la caméra (comme dolly mais sur le côté)', platforms: ['kling','veo','runway'] },
+      { en: 'crane shot', fr: 'prise de vue à la grue', desc: 'Mouvement vertical ample via grue ou jib', platforms: ['all'] },
+      { en: 'aerial shot', fr: 'vue aérienne / plan drone', desc: 'Prise de vue depuis les airs, style drone', platforms: ['all'] },
+      { en: 'handheld camera', fr: 'caméra à l\'épaule', desc: 'Mouvement organique, légèrement instable — sensation documentaire', platforms: ['all'] },
+      { en: 'steadicam shot', fr: 'plan steadicam', desc: 'Travelling fluide stabilisé mécaniquement', platforms: ['kling','veo','runway'] },
+      { en: 'tracking shot', fr: 'plan de suivi / travelling de suivi', desc: 'La caméra suit le sujet en mouvement', platforms: ['all'] },
+      { en: 'whip pan', fr: 'panoramique filé', desc: 'Panoramique très rapide créant un flou de mouvement', platforms: ['kling','canvas','veo'] },
+      { en: 'orbit shot / 360 orbit', fr: 'plan orbital / orbite 360°', desc: 'La caméra tourne autour du sujet', platforms: ['kling','veo'] },
+      { en: 'push in', fr: 'rapprochement progressif', desc: 'Lent mouvement vers le sujet, plus subtil qu\'un dolly', platforms: ['all'] },
+      { en: 'pull back reveal', fr: 'recul révélateur', desc: 'Le recul dévoile progressivement un contexte plus large', platforms: ['all'] },
+      { en: 'roll / dutch tilt', fr: 'inclinaison néerlandaise / roulis', desc: 'Rotation sur l\'axe optique — crée tension ou déséquilibre', platforms: ['kling','veo','runway'] },
+    ]
+  },
+  {
+    icon: '📐',
+    title: 'Angles de Prise de Vue',
+    titleEn: 'Camera Angles',
+    terms: [
+      { en: 'eye level shot', fr: 'plan à hauteur des yeux', desc: 'Angle neutre, naturel', platforms: ['all'] },
+      { en: 'low angle shot', fr: 'contre-plongée', desc: 'Caméra en dessous du sujet — impression de puissance', platforms: ['all'] },
+      { en: 'high angle shot', fr: 'plongée', desc: 'Caméra au-dessus du sujet — impression de vulnérabilité', platforms: ['all'] },
+      { en: 'bird\'s eye view', fr: 'vue à vol d\'oiseau / vue zénithale', desc: 'Strictement du dessus, 90° vertical', platforms: ['all'] },
+      { en: 'worm\'s eye view', fr: 'vue en contre-plongée extrême', desc: 'Angle depuis le sol regardant vers le haut', platforms: ['all'] },
+      { en: 'dutch angle', fr: 'angle incliné / angle oblique', desc: 'Horizon penché — instabilité, suspense', platforms: ['all'] },
+      { en: 'over-the-shoulder shot', fr: 'plan par-dessus l\'épaule', desc: 'Cadrage dialogue classique, épaule visible', platforms: ['all'] },
+      { en: 'point of view shot (POV)', fr: 'plan subjectif (POV)', desc: 'Vue depuis les yeux du personnage', platforms: ['all'] },
+      { en: 'over-head shot', fr: 'plan aérien vertical', desc: 'Vue de dessus sans être strictement à 90°', platforms: ['kling','veo','canvas'] },
+      { en: 'profile shot', fr: 'plan de profil', desc: 'Sujet filmé de côté, vue latérale', platforms: ['all'] },
+    ]
+  },
+  {
+    icon: '🔭',
+    title: 'Tailles de Plan',
+    titleEn: 'Shot Sizes',
+    terms: [
+      { en: 'extreme wide shot (EWS)', fr: 'plan d\'ensemble extrême', desc: 'Décor dominant, personnage minuscule ou absent', platforms: ['all'] },
+      { en: 'wide shot (WS)', fr: 'plan d\'ensemble / plan large', desc: 'Personnage entier dans son environnement', platforms: ['all'] },
+      { en: 'full shot', fr: 'plan pied', desc: 'Corps entier du personnage dans le cadre', platforms: ['all'] },
+      { en: 'medium long shot (MLS)', fr: 'plan américain', desc: 'Personnage des genoux à la tête', platforms: ['all'] },
+      { en: 'medium shot (MS)', fr: 'plan moyen / plan taille', desc: 'Personnage de la taille à la tête', platforms: ['all'] },
+      { en: 'medium close-up (MCU)', fr: 'plan rapproché poitrine', desc: 'Buste et visage', platforms: ['all'] },
+      { en: 'close-up (CU)', fr: 'gros plan', desc: 'Visage remplissant l\'écran', platforms: ['all'] },
+      { en: 'extreme close-up (ECU)', fr: 'très gros plan', desc: 'Détail : œil, bouche, mains…', platforms: ['all'] },
+      { en: 'two-shot', fr: 'plan à deux personnages', desc: 'Deux personnages dans le même cadre', platforms: ['all'] },
+      { en: 'insert shot', fr: 'plan d\'insert', desc: 'Gros plan sur un détail narratif important', platforms: ['kling','veo','runway'] },
+    ]
+  },
+  {
+    icon: '💡',
+    title: 'Éclairage',
+    titleEn: 'Lighting',
+    terms: [
+      { en: 'cinematic lighting', fr: 'éclairage cinématographique', desc: 'Terme générique pour un éclairage dramatique de qualité film', platforms: ['all'] },
+      { en: 'golden hour lighting', fr: 'lumière de l\'heure dorée', desc: 'Lumière chaude rasante du lever ou coucher de soleil', platforms: ['all'] },
+      { en: 'blue hour lighting', fr: 'lumière de l\'heure bleue', desc: 'Crépuscule ou aube — tons bleus et froids doux', platforms: ['all'] },
+      { en: 'hard lighting', fr: 'lumière dure', desc: 'Ombres nettes et contrastées', platforms: ['all'] },
+      { en: 'soft lighting', fr: 'lumière douce / lumière diffuse', desc: 'Ombres douces, peu de contraste', platforms: ['all'] },
+      { en: 'chiaroscuro lighting', fr: 'clair-obscur', desc: 'Fort contraste lumière/ombre, style Rembrandt', platforms: ['kling','veo','runway'] },
+      { en: 'rim lighting / backlight', fr: 'lumière de contour / contre-jour', desc: 'Lumière derrière le sujet — halo de séparation', platforms: ['all'] },
+      { en: 'practical lighting', fr: 'lumière praticable', desc: 'Lumière provenant de sources visibles dans le plan (lampes, bougies…)', platforms: ['kling','veo','runway'] },
+      { en: 'neon lighting', fr: 'éclairage néon', desc: 'Lumières colorées style cyberpunk / urbain nocturne', platforms: ['all'] },
+      { en: 'motivated lighting', fr: 'lumière motivée', desc: 'Éclairage justifié par une source diégétique', platforms: ['veo','runway'] },
+      { en: 'high key lighting', fr: 'éclairage à haute teinte', desc: 'Scène très lumineuse, peu d\'ombres — ton optimiste', platforms: ['all'] },
+      { en: 'low key lighting', fr: 'éclairage à basse teinte', desc: 'Scène sombre, ombres dominantes — atmosphère mystérieuse', platforms: ['all'] },
+      { en: 'dramatic shadows', fr: 'ombres dramatiques', desc: 'Ombres portées stylisées et expressives', platforms: ['all'] },
+      { en: 'volumetric lighting', fr: 'lumière volumétrique', desc: 'Rayons de lumière visibles dans l\'atmosphère (God rays)', platforms: ['all'] },
+      { en: 'candlelight', fr: 'lumière de bougie', desc: 'Éclairage chaleureux, vacillant, intimiste', platforms: ['all'] },
+    ]
+  },
+  {
+    icon: '🎞',
+    title: 'Optique & Objectifs',
+    titleEn: 'Optics & Lenses',
+    terms: [
+      { en: 'shallow depth of field', fr: 'faible profondeur de champ', desc: 'Arrière-plan flou, sujet net — effet bokeh', platforms: ['all'] },
+      { en: 'deep focus', fr: 'profondeur de champ totale', desc: 'Tout le plan est net, du premier plan à l\'arrière', platforms: ['all'] },
+      { en: 'bokeh', fr: 'bokeh (flou artistique)', desc: 'Zones hors mise au point rendues avec rondeur esthétique', platforms: ['all'] },
+      { en: 'rack focus', fr: 'changement de mise au point / bascule focus', desc: 'Passage progressif de la netteté d\'un sujet à un autre', platforms: ['kling','veo','runway'] },
+      { en: 'wide angle lens', fr: 'objectif grand angle', desc: 'Champ large, légère distorsion périphérique', platforms: ['all'] },
+      { en: 'telephoto lens', fr: 'téléobjectif', desc: 'Compression de l\'espace, sujets distants rapprochés', platforms: ['all'] },
+      { en: 'fisheye lens', fr: 'objectif fisheye / œil de poisson', desc: 'Distorsion extrême hémisphérique', platforms: ['all'] },
+      { en: 'macro lens', fr: 'objectif macro', desc: 'Photographie/vidéo en très gros plan, petits détails', platforms: ['kling','veo'] },
+      { en: 'anamorphic lens', fr: 'objectif anamorphique', desc: 'Format large avec flares horizontaux caractéristiques', platforms: ['kling','veo','runway'] },
+      { en: 'lens flare', fr: 'halo / reflet d\'objectif', desc: 'Artefact lumineux dans l\'optique — effet cinéma', platforms: ['all'] },
+      { en: 'chromatic aberration', fr: 'aberration chromatique', desc: 'Frange colorée aux bords — effet vintage ou artistique', platforms: ['kling','canvas','runway'] },
+      { en: 'vignette', fr: 'vignettage', desc: 'Assombrissement des bords du cadre', platforms: ['all'] },
+    ]
+  },
+  {
+    icon: '🎨',
+    title: 'Style & Esthétique',
+    titleEn: 'Style & Aesthetics',
+    terms: [
+      { en: 'film grain', fr: 'grain cinématographique', desc: 'Texture granuleuse organique des pellicules argentiques', platforms: ['all'] },
+      { en: 'cinematic color grading', fr: 'étalonnage cinématographique', desc: 'Traitement colorimétrique de qualité film', platforms: ['all'] },
+      { en: 'teal and orange color grade', fr: 'étalonnage sarcelle et orange', desc: 'Palette populaire hollywoodienne — tons chauds/froids contrastés', platforms: ['all'] },
+      { en: 'desaturated look', fr: 'look désaturé', desc: 'Couleurs atténuées, style drame contemporain', platforms: ['all'] },
+      { en: 'monochromatic', fr: 'monochrome', desc: 'Une seule teinte dominante ou noir et blanc', platforms: ['all'] },
+      { en: '35mm film look', fr: 'rendu pellicule 35mm', desc: 'Esthétique argentique avec grain et latitude de contraste', platforms: ['kling','veo','runway'] },
+      { en: 'black and white', fr: 'noir et blanc', desc: 'Image en niveaux de gris', platforms: ['all'] },
+      { en: 'retro / vintage aesthetic', fr: 'esthétique rétro / vintage', desc: 'Codes visuels d\'une époque passée', platforms: ['all'] },
+      { en: 'neo-noir', fr: 'néo-noir', desc: 'Film noir contemporain — ombres expressives, ambiguïté morale', platforms: ['kling','veo','runway'] },
+      { en: 'cyberpunk aesthetic', fr: 'esthétique cyberpunk', desc: 'Futurisme urbain, néons, rain-slicked streets', platforms: ['all'] },
+      { en: 'photorealistic', fr: 'photoréaliste', desc: 'Rendu indistinguable d\'une vraie prise de vue', platforms: ['veo','kling'] },
+      { en: 'hyperrealistic', fr: 'hyperréaliste', desc: 'Détails amplifiés au-delà du réel', platforms: ['veo','kling'] },
+    ]
+  },
+  {
+    icon: '⏱',
+    title: 'Vitesse & Temps',
+    titleEn: 'Speed & Time',
+    terms: [
+      { en: 'slow motion', fr: 'ralenti', desc: 'Mouvement ralenti — intensité dramatique ou beauté du geste', platforms: ['all'] },
+      { en: 'ultra slow motion', fr: 'ultra-ralenti', desc: 'Ralenti extrême type Phantom (1000fps+)', platforms: ['kling','veo','runway'] },
+      { en: 'fast motion', fr: 'accéléré', desc: 'Mouvement accéléré — comique ou effet de temps qui passe', platforms: ['all'] },
+      { en: 'time-lapse', fr: 'time-lapse / accéléré long terme', desc: 'Compression du temps sur heures ou jours', platforms: ['veo','runway'] },
+      { en: 'hyperlapse', fr: 'hyperlapse', desc: 'Time-lapse avec déplacement de la caméra', platforms: ['veo','runway'] },
+      { en: 'freeze frame', fr: 'arrêt sur image', desc: 'Image figée pendant un instant', platforms: ['kling','veo','canvas'] },
+      { en: 'ramping / speed ramp', fr: 'variation de vitesse', desc: 'Transition entre vitesse normale et ralenti/accéléré', platforms: ['kling','veo','runway'] },
+      { en: 'match cut', fr: 'raccord dans le mouvement / coupe dans l\'axe', desc: 'Coupe reliant deux plans par similarité visuelle ou de mouvement', platforms: ['veo','runway'] },
+      { en: 'long take', fr: 'plan-séquence', desc: 'Plan unique de longue durée sans coupe', platforms: ['kling','veo','runway'] },
+    ]
+  },
+  {
+    icon: '🌫',
+    title: 'Atmosphère & Effets',
+    titleEn: 'Atmosphere & FX',
+    terms: [
+      { en: 'fog / mist atmosphere', fr: 'atmosphère brumeuse / brouillard', desc: 'Particules diffusant la lumière — profondeur mystérieuse', platforms: ['all'] },
+      { en: 'rain', fr: 'pluie', desc: 'Précipitations visibles dans le plan', platforms: ['all'] },
+      { en: 'snow falling', fr: 'chute de neige', desc: 'Flocons dans le plan', platforms: ['all'] },
+      { en: 'dust particles', fr: 'particules de poussière', desc: 'Grains en suspension dans l\'air lumineux', platforms: ['all'] },
+      { en: 'smoke', fr: 'fumée', desc: 'Volutes de fumée — tension, mystère, danger', platforms: ['all'] },
+      { en: 'god rays / crepuscular rays', fr: 'rayons divins / rayons crépusculaires', desc: 'Rayons de lumière traversant nuages ou feuillage', platforms: ['all'] },
+      { en: 'light reflections on water', fr: 'reflets de lumière sur l\'eau', desc: 'Caustiques et reflets dynamiques', platforms: ['all'] },
+      { en: 'heat haze', fr: 'brume de chaleur', desc: 'Distorsion de l\'air surchauffé', platforms: ['veo','kling','runway'] },
+      { en: 'motion blur', fr: 'flou de mouvement', desc: 'Traîne de netteté due au mouvement rapide', platforms: ['all'] },
+    ]
+  },
+  {
+    icon: '🏛',
+    title: 'Composition',
+    titleEn: 'Composition',
+    terms: [
+      { en: 'rule of thirds', fr: 'règle des tiers', desc: 'Sujet positionné sur les intersections du tiers', platforms: ['all'] },
+      { en: 'symmetrical composition', fr: 'composition symétrique', desc: 'Symétrie bilatérale — Kubrick, Anderson', platforms: ['all'] },
+      { en: 'leading lines', fr: 'lignes directrices', desc: 'Lignes menant le regard vers le sujet', platforms: ['all'] },
+      { en: 'negative space', fr: 'espace négatif', desc: 'Large zone vide autour du sujet — souligne la solitude, l\'espace', platforms: ['all'] },
+      { en: 'foreground element', fr: 'élément au premier plan', desc: 'Objet proche en avant-plan pour la profondeur', platforms: ['all'] },
+      { en: 'layered composition', fr: 'composition en couches / profondeur', desc: 'Plusieurs plans distincts de profondeur visibles', platforms: ['all'] },
+      { en: 'frame within a frame', fr: 'cadre dans le cadre', desc: 'Fenêtre, arcade, porte encadrant le sujet', platforms: ['all'] },
+      { en: 'centered framing', fr: 'cadrage centré', desc: 'Sujet au centre — style Wes Anderson', platforms: ['all'] },
+    ]
+  },
+  {
+    icon: '🎭',
+    title: 'Genre & Ton',
+    titleEn: 'Genre & Tone',
+    terms: [
+      { en: 'epic cinematic', fr: 'épique cinématographique', desc: 'Grande échelle, héroïsme, musique orchestrale', platforms: ['all'] },
+      { en: 'documentary style', fr: 'style documentaire', desc: 'Réalisme, caméra à l\'épaule, lumière naturelle', platforms: ['all'] },
+      { en: 'horror atmosphere', fr: 'atmosphère horrifique', desc: 'Tension, ombres menaçantes, lumière froide', platforms: ['all'] },
+      { en: 'romantic aesthetic', fr: 'esthétique romantique', desc: 'Douceur, bokeh, lumière chaude et dorée', platforms: ['all'] },
+      { en: 'thriller aesthetic', fr: 'esthétique thriller', desc: 'Tension, angles bas, palette désaturée froide', platforms: ['kling','veo','runway'] },
+      { en: 'action movie style', fr: 'style film d\'action', desc: 'Mouvements rapides, angles dynamiques', platforms: ['all'] },
+      { en: 'surrealist / dreamlike', fr: 'surréaliste / onirique', desc: 'Logique visuelle déformée, impossible rendu possible', platforms: ['all'] },
+      { en: 'fashion film style', fr: 'style film de mode', desc: 'Éclairage parfait, mouvements lents, esthétique luxe', platforms: ['canvas','veo','runway'] },
+      { en: 'music video aesthetic', fr: 'esthétique clip musical', desc: 'Coupes rythmées, effets visuels stylisés', platforms: ['kling','canvas','runway'] },
+    ]
+  },
+  {
+    icon: '🔧',
+    title: 'Termes Techniques Spécifiques',
+    titleEn: 'Platform-Specific Terms',
+    terms: [
+      { en: 'camera motion: static', fr: 'caméra statique (Kling)', desc: 'Terme Kling : aucun mouvement de caméra', platforms: ['kling'] },
+      { en: 'motion brush', fr: 'pinceau de mouvement (Pika/Canvas)', desc: 'Outil Canvas/Pika pour définir des zones animées différemment', platforms: ['canvas'] },
+      { en: 'extend video', fr: 'prolonger la vidéo (Canvas)', desc: 'Fonctionnalité Canvas pour allonger une clip', platforms: ['canvas'] },
+      { en: 'reference image', fr: 'image de référence', desc: 'Utiliser une image pour guider la génération (image-to-video)', platforms: ['all'] },
+      { en: 'first frame / last frame', fr: 'première / dernière image (Kling)', desc: 'Paramètre Kling pour contrôler début et fin de la vidéo', platforms: ['kling'] },
+      { en: 'subject motion', fr: 'mouvement du sujet (Kling)', desc: 'Décrire séparément le mouvement de la caméra et du sujet', platforms: ['kling'] },
+      { en: 'negative prompt', fr: 'prompt négatif', desc: 'Termes à exclure de la génération', platforms: ['kling','canvas','runway'] },
+      { en: 'aspect ratio 16:9 / 9:16', fr: 'ratio 16:9 / 9:16', desc: 'Format paysage (cinéma) ou portrait (mobile/réseaux)', platforms: ['all'] },
+      { en: 'seed number', fr: 'numéro de graine', desc: 'Valeur permettant de reproduire un résultat identique', platforms: ['kling','runway'] },
+      { en: 'cfg scale', fr: 'échelle de guidage', desc: 'Intensité de l\'adhérence au prompt (Runway Gen)', platforms: ['runway'] },
+      { en: 'audio description (Veo 3)', fr: 'description audio (Veo 3)', desc: 'Veo 3 supporte la génération sonore — décrire son ambiant et dialogues', platforms: ['veo'] },
+      { en: 'dialogue in prompt (Veo 3)', fr: 'dialogues dans le prompt (Veo 3)', desc: 'Veo 3 peut générer des personnages qui parlent — inclure le texte du dialogue', platforms: ['veo'] },
+    ]
+  },
+];
+
+// ─── RENDER ──────────────────────────────────────────────────────────────────
+const main = document.getElementById('main');
+
+function buildBadges(platforms) {
+  if (platforms.includes('all')) return '';
+  return `<div class="badges">${platforms.map(p => `<span class="badge ${p}">${p.toUpperCase()}</span>`).join('')}</div>`;
+}
+
+function getPlatformClass(platforms) {
+  if (platforms.includes('all') || platforms.length > 2) return 'all';
+  return platforms[0];
+}
+
+function buildSection(section) {
+  const sectionEl = document.createElement('div');
+  sectionEl.className = 'section';
+  sectionEl.dataset.section = section.title;
+
+  const header = `
+    <div class="section-header">
+      <span class="section-icon">${section.icon}</span>
+      <div>
+        <div class="section-title">${section.title}</div>
+      </div>
+      <span class="section-count">${section.terms.length} termes</span>
+    </div>`;
+
+  const grid = document.createElement('div');
+  grid.className = 'grid';
+
+  section.terms.forEach(term => {
+    const cls = getPlatformClass(term.platforms);
+    const card = document.createElement('div');
+    card.className = `term ${cls}`;
+    card.dataset.en = term.en.toLowerCase();
+    card.dataset.fr = term.fr.toLowerCase();
+    card.dataset.platforms = term.platforms.join(',');
+    card.innerHTML = `
+      <div class="term-en">
+        <span>${term.en}</span>
+        ${buildBadges(term.platforms)}
+      </div>
+      <div class="term-fr">${term.fr}</div>
+      ${term.desc ? `<div class="term-desc">${term.desc}</div>` : ''}
+      <span class="copy-icon">⎘</span>
+    `;
+    card.addEventListener('click', () => copyTerm(card, term.en));
+    grid.appendChild(card);
+  });
+
+  sectionEl.innerHTML = header;
+  sectionEl.appendChild(grid);
+  return sectionEl;
+}
+
+SECTIONS.forEach(s => main.appendChild(buildSection(s)));
+
+// ─── COPY ────────────────────────────────────────────────────────────────────
+const toast = document.getElementById('toast');
+let toastTimeout;
+
+function copyTerm(card, text) {
+  navigator.clipboard.writeText(text).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+  card.classList.add('copied');
+  setTimeout(() => card.classList.remove('copied'), 1000);
+
+  toast.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => toast.classList.remove('show'), 1800);
+}
+
+// ─── FILTER ──────────────────────────────────────────────────────────────────
+let activeFilter = 'all';
+
+document.querySelectorAll('.legend-item').forEach(btn => {
+  btn.addEventListener('click', () => {
+    activeFilter = btn.dataset.filter;
+    document.querySelectorAll('.legend-item').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyFilters();
+  });
+});
+
+function applyFilters() {
+  const q = document.getElementById('search').value.toLowerCase().trim();
+
+  document.querySelectorAll('.term').forEach(card => {
+    const matchesFilter = activeFilter === 'all' ||
+      card.dataset.platforms.includes(activeFilter);
+    const matchesSearch = !q ||
+      card.dataset.en.includes(q) ||
+      card.dataset.fr.includes(q) ||
+      card.querySelector('.term-desc')?.textContent.toLowerCase().includes(q);
+
+    card.classList.toggle('hidden', !(matchesFilter && matchesSearch));
+  });
+
+  // Hide empty sections
+  document.querySelectorAll('.section').forEach(sec => {
+    const visible = [...sec.querySelectorAll('.term')].some(c => !c.classList.contains('hidden'));
+    sec.classList.toggle('hidden', !visible);
+  });
+}
+
+document.getElementById('search').addEventListener('input', applyFilters);
+</script>
+</body>
+</html>
